@@ -26,10 +26,11 @@ class Net(nn.Module):
 
 class DQN:
     
-    def __init__(self, out_channels, kernel_size, actions_space, lr, gamma) -> None:
+    def __init__(self, out_channels, kernel_size, actions_space, lr, gamma, game_size) -> None:
         super().__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f"Device: {self.device}")
+        self.game_size = game_size
         self.gamma = gamma
         self.model = Net(out_channels, kernel_size, actions_space).to(self.device)
         self.target = Net(out_channels, kernel_size, actions_space).to(self.device)
@@ -40,10 +41,10 @@ class DQN:
     def train_step(self, transitions):
         batch = Transition(*zip(*transitions))
         # Use batch to update DQN's network.
-        state_batch = torch.Tensor(batch.state).view(-1, 1, 3, 3).to(self.device)
+        state_batch = torch.Tensor(batch.state).view(-1, 1, self.game_size, self.game_size).to(self.device)
         action_batch = torch.Tensor(batch.action).unsqueeze(1).to(self.device)
         reward_batch = torch.Tensor(batch.reward).unsqueeze(1).to(self.device)
-        next_state_values = torch.Tensor(batch.next_state).view(-1, 1, 3, 3).to(self.device)
+        next_state_values = torch.Tensor(batch.next_state).view(-1, 1, self.game_size, self.game_size).to(self.device)
         state_action_values = self.model(state_batch).gather(1, action_batch.long())
 
         expected_state_action_values = (self.target(next_state_values).max(1)[0].detach().unsqueeze(
