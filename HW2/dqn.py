@@ -31,9 +31,9 @@ class DQN:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f"Device: {self.device}")
         self.gamma = gamma
-        self.model = Net(out_channels, kernel_size, actions_space)
-        self.target = Net(out_channels, kernel_size, actions_space)
-        self.target.load_state_dict(deepcopy(self.model.state_dict())) 
+        self.model = Net(out_channels, kernel_size, actions_space).to(self.device)
+        self.target = Net(out_channels, kernel_size, actions_space).to(self.device)
+        self.target.load_state_dict(deepcopy(self.model.state_dict()))
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         
 
