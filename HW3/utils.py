@@ -8,4 +8,4 @@ def display_progress(cond: torch.Tensor, fake: torch.Tensor, real: torch.Tensor,
         ax[i][0].imshow(cond[i].permute(1, 2, 0))
         ax[i][2].imshow(fake[i].permute(1, 2, 0))
         ax[i][1].imshow(real[i].permute(1, 2, 0))
-        plt.show()
+    plt.show()
