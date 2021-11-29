@@ -79,10 +79,10 @@ class GeneratorUNet(nn.Module):
         
 
 class Discriminator(nn.Module):
-    def __init__(self, is_single=False):
+    def __init__(self, is_cycle=False):
         super().__init__()
-        self.is_single = is_single
-        self.conv_down1 = conv_layer(3 if is_single else 6, 64)
+        self.is_cycle = is_cycle
+        self.conv_down1 = conv_layer(3 if is_cycle else 6, 64)
         self.conv_down2 = conv_layer(64, 128)
         self.conv_down3 = conv_layer(128, 256)
         self.conv_down4 = conv_layer(256, 512)
@@ -92,7 +92,7 @@ class Discriminator(nn.Module):
         self.fc = nn.Linear(512, 2)
         
     def forward(self, condition, x=None):
-        if self.is_single:
+        if self.is_cycle:
             x = condition
         else:
             x = torch.cat([condition, x], dim=1)
