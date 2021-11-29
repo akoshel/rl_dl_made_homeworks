@@ -11,8 +11,7 @@ class CycleGan:
         self.generator2 = GeneratorUNet().to(self.device)
         self.discriminator1 = Discriminator(is_cycle=True).to(self.device)
         self.discriminator2 = Discriminator(is_cycle=True).to(self.device)
-        self.optimizer_g1 = Adam(self.generator1.parameters(), lr=0.0002, betas=(0.5, 0.999))
-        self.optimizer_g2 = Adam(self.generator2.parameters(), lr=0.0002, betas=(0.5, 0.999))
+        self.optimizer_g = Adam(list(self.generator1.parameters()) + list(self.generator2.parameters()), lr=0.0002, betas=(0.5, 0.999))
         self.optimizer_d1 = Adam(self.discriminator1.parameters(), lr=0.0002, betas=(0.5, 0.999))
         self.optimizer_d2 = Adam(self.discriminator2.parameters(), lr=0.0002, betas=(0.5, 0.999))
         self.criterion_l1 = torch.nn.SmoothL1Loss()
@@ -44,8 +43,7 @@ class CycleGan:
         self.optimizer_d1.step()
         self.optimizer_d2.step()
 
-        self.optimizer_g1.zero_grad()
-        self.optimizer_g2.zero_grad()
+        self.optimizer_g.zero_grad()
 
         fake_orig = self.generator1(real_seg)
         fake_seg = self.generator2(real_origin)
@@ -61,13 +59,11 @@ class CycleGan:
         loss_g1 = loss_g1_l1 + ce_g1
         loss_g2 = loss_g2_l1 + ce_g2
 
-        loss_g1.backward()
-        loss_g2.backward()
-
-        self.optimizer_g1.step()
-        self.optimizer_g2.step()
+        loss_g = loss_g1 + loss_g2
+        loss_g.backward()
+        self.optimizer_g.step()
         
-        return loss_d1.item(), loss_d2.item(), loss_g1.item(), loss_g2.item()
+        return loss_d1.item(), loss_d2.item(), loss_g.item()
     
     def generate(self, batch: torch.Tensor) -> None:
         with torch.no_grad():
