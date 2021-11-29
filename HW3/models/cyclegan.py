@@ -9,8 +9,8 @@ class CycleGan:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.generator1 = GeneratorUNet().to(self.device)
         self.generator2 = GeneratorUNet().to(self.device)
-        self.discriminator1 = Discriminator(is_cycle=True)
-        self.discriminator2 = Discriminator(is_cycle=True)
+        self.discriminator1 = Discriminator(is_cycle=True).to(self.device)
+        self.discriminator2 = Discriminator(is_cycle=True).to(self.device)
         self.optimizer_g1 = Adam(self.generator1.parameters(), lr=0.0002, betas=(0.5, 0.999))
         self.optimizer_g2 = Adam(self.generator2.parameters(), lr=0.0002, betas=(0.5, 0.999))
         self.optimizer_d1 = Adam(self.discriminator1.parameters(), lr=0.0002, betas=(0.5, 0.999))
