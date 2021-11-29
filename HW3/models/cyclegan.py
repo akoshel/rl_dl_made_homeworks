@@ -68,3 +68,8 @@ class CycleGan:
         self.optimizer_g2.step()
         
         return loss_d1.item(), loss_d2.item(), loss_g1.item(), loss_g2.item()
+    
+    def generate(self, batch: torch.Tensor) -> None:
+        with torch.no_grad():
+            pred = self.generator1(batch.to(self.device))
+        return pred.cpu()
