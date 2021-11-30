@@ -65,7 +65,12 @@ class CycleGan:
         
         return loss_d1.item(), loss_d2.item(), loss_g.item()
     
-    def generate(self, batch: torch.Tensor) -> None:
+    def generate_original(self, batch: torch.Tensor) -> None:
         with torch.no_grad():
             pred = self.generator1(batch.to(self.device))
+        return pred.cpu()
+
+    def generate_seg(self, batch: torch.Tensor) -> None:
+        with torch.no_grad():
+            pred = self.generator2(batch.to(self.device))
         return pred.cpu()
