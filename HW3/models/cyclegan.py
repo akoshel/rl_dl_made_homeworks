@@ -56,8 +56,8 @@ class CycleGan:
         ce_g1 = self.criterion_ce(orig_logits_fake, torch.ones(orig_logits_fake.shape[0]).long().to(self.device))
         ce_g2 = self.criterion_ce(seg_logits_fake, torch.ones(seg_logits_fake.shape[0]).long().to(self.device))
         
-        loss_g1 = loss_g1_l1 + ce_g1
-        loss_g2 = loss_g2_l1 + ce_g2
+        loss_g1 = 5 * loss_g1_l1 + ce_g1 # In paper coef is 10 * 0.5
+        loss_g2 = 5 * loss_g2_l1 + ce_g2
 
         loss_g = loss_g1 + loss_g2
         loss_g.backward()
